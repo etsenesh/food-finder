@@ -5,6 +5,7 @@ import {
   FaRandom,
   FaSearch,
   FaChevronDown,
+  FaBars,
 } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import { getCategories, getRandomMeal } from "../services/mealApi";
@@ -12,6 +13,15 @@ import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card } from "./ui/card";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Header = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -23,7 +33,9 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Controlled states:
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     getCategories().then((data) => {
@@ -31,10 +43,12 @@ const Header = () => {
     });
   }, []);
 
-  const isCategoryPage =
-    location.pathname === "/" &&
-    new URLSearchParams(location.search).has("category");
-  const isCountriesPage = location.pathname === "/countries";
+  // Close popover when selecting category
+  const handleCategorySelect = (cat) => {
+    setCategoriesOpen(false);
+    setSheetOpen(false); // Also close sheet if open (mobile)
+    navigate(`/?category=${encodeURIComponent(cat)}`);
+  };
 
   // Close search on click outside
   useEffect(() => {
@@ -48,9 +62,23 @@ const Header = () => {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showSearch]);
+
+  // Auto-close mobile sheet menu on window resize >= md (768px)
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 768) {
+        setSheetOpen(false);
+      }
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isCategoryPage =
+    location.pathname === "/" &&
+    new URLSearchParams(location.search).has("category");
 
   const handleSearchIconClick = () => {
     setShowSearch((prev) => !prev);
@@ -74,15 +102,11 @@ const Header = () => {
   const handleRandomClick = async () => {
     const meal = await getRandomMeal();
     if (meal && meal.idMeal) {
+      setSheetOpen(false); // Close sheet on mobile too
       navigate(`/meal/${meal.idMeal}`);
     } else {
       alert("Could not fetch a random meal. Please try again!");
     }
-  };
-
-  const handleCategorySelect = (cat) => {
-    setCategoriesOpen(false);
-    navigate(`/?category=${encodeURIComponent(cat)}`);
   };
 
   return (
@@ -107,28 +131,27 @@ const Header = () => {
           </span>
           <span className="ml-1">Foodie Finder</span>
         </Link>
-        {/* Nav */}
-        <nav className="flex items-center gap-6 text-base font-medium">
-          {/* Favorites NavLink */}
+
+        {/* Desktop nav (hidden on mobile) */}
+        <nav className="hidden md:flex items-center gap-6 text-base font-medium">
           <NavLink
             to="/favorites"
             className={({ isActive }) =>
               isActive
-                ? "text-primary font-bold border-b-2 border-primary pb-0.5 transition-colors"
-                : "hover:text-primary hover:border-b-2 hover:border-primary pb-0.5 transition-colors"
+                ? "text-primary font-bold transition-colors"
+                : "hover:text-primary transition-colors"
             }
           >
             Favorites
           </NavLink>
-          {/* Categories Dropdown with Popover */}
+
+          {/* Categories Dropdown */}
           <Popover open={categoriesOpen} onOpenChange={setCategoriesOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
                 className={`flex items-center gap-1 px-2 py-2 bg-transparent shadow-none hover:bg-[#232323] hover:text-primary transition-colors ${
-                  isCategoryPage
-                    ? "text-primary font-bold border-b-2 border-primary pb-0.5"
-                    : ""
+                  isCategoryPage ? "text-primary font-bold" : ""
                 }`}
                 type="button"
               >
@@ -152,18 +175,18 @@ const Header = () => {
               </ul>
             </PopoverContent>
           </Popover>
-          {/* Countries NavLink */}
+
           <NavLink
             to="/countries"
             className={({ isActive }) =>
               isActive
-                ? "text-primary font-bold border-b-2 border-primary pb-0.5 transition-colors"
-                : "hover:text-primary hover:border-b-2 hover:border-primary pb-0.5 transition-colors"
+                ? "text-primary font-bold transition-colors"
+                : "hover:text-primary transition-colors"
             }
           >
             Countries
           </NavLink>
-          {/* RANDOM BUTTON */}
+
           <Button
             variant="ghost"
             className="flex items-center gap-1 bg-transparent px-0 hover:bg-[#232323] hover:text-primary transition-colors font-medium shadow-none"
@@ -174,7 +197,8 @@ const Header = () => {
             <FaRandom className="text-base" />
             Random
           </Button>
-          {/* Search Icon/Button */}
+
+          {/* Search */}
           <div className="relative flex items-center">
             <Button
               type="button"
@@ -221,6 +245,79 @@ const Header = () => {
             )}
           </div>
         </nav>
+
+        {/* Mobile Sheet menu */}
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              className="md:hidden p-2 rounded-md hover:bg-[#232323] transition-colors"
+              aria-label="Open menu"
+            >
+              <FaBars className="text-white" />
+            </Button>
+          </SheetTrigger>
+
+          <SheetContent side="right" className="p-4">
+            <SheetHeader>
+              <SheetTitle>Menu</SheetTitle>
+              <SheetDescription>Navigate Foodie Finder</SheetDescription>
+            </SheetHeader>
+
+            <nav className="flex flex-col gap-4 mt-4">
+              <NavLink
+                to="/favorites"
+                onClick={() => setSheetOpen(false)}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-primary font-bold transition-colors"
+                    : "hover:text-primary transition-colors"
+                }
+              >
+                Favorites
+              </NavLink>
+
+              <div>
+                <h3 className="font-semibold mb-2">Categories</h3>
+                <ul className="max-h-60 overflow-y-auto">
+                  {categories.map((cat) => (
+                    <li key={cat}>
+                      <button
+                        className="w-full text-left rounded px-2 py-1 hover:bg-[#232323] hover:text-primary transition-colors"
+                        onClick={() => handleCategorySelect(cat)}
+                      >
+                        {cat}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <NavLink
+                to="/countries"
+                onClick={() => setSheetOpen(false)}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-primary font-bold transition-colors"
+                    : "hover:text-primary transition-colors"
+                }
+              >
+                Countries
+              </NavLink>
+
+              <Button
+                variant="ghost"
+                className="flex items-center gap-1 bg-transparent px-0 hover:bg-[#232323] hover:text-primary transition-colors font-medium shadow-none"
+                type="button"
+                onClick={handleRandomClick}
+                aria-label="Random Meal"
+              >
+                <FaRandom className="text-base" />
+                Random
+              </Button>
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
