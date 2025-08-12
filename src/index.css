@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 9%;         /* #181818 */
+    --foreground: 0 0% 100%;          /* #FFFFFF */
+    --card: 0 0% 14%;                 /* #242424 */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 14%;              /* #242424 */
+    --popover-foreground: 0 0% 100%;
+    --primary: 28 100% 53%;           /* #FF7000 (orange) */
+    --primary-foreground: 0 0% 100%;  /* #FFFFFF */
+    --secondary: 24 15% 20%;          /* ~#292421 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 24 5% 23%;               /* ~#2c2a28 */
+    --muted-foreground: 36 1% 70%;    /* #b3b2b1 */
+    --accent: 28 100% 53%;            /* #FF7000 */
+    --accent-foreground: 0 0% 100%;   /* #FFFFFF */
+    --destructive: 0 84% 60.2%;       /* #ff4343 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 24 6% 16%;              /* #242424 */
+    --input: 24 6% 16%;               /* #242424 */
+    --ring: 28 100% 53%;              /* #FF7000 */
+    --chart-1: 28 100% 53%;           /* #FF7000 */
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --font-heading: "Playfair Display", serif;
+  }
+  .dark {
+    --background: 0 0% 10%;           /* #181818 (keep dark) */
+    --foreground: 0 0% 100%;
+    --card: 0 0% 14%;                 /* #242424 */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 14%;              /* #242424 */
+    --popover-foreground: 0 0% 100%;
+    --primary: 28 100% 53%;           /* #FF7000 */
+    --primary-foreground: 0 0% 100%;  /* #FFFFFF */
+    --secondary: 24 15% 20%;          /* ~#292421 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 24 5% 23%;               /* ~#2c2a28 */
+    --muted-foreground: 36 1% 70%;    /* #b3b2b1 */
+    --accent: 28 100% 53%;            /* #FF7000 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60.2%;       /* #ff4343 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 24 6% 16%;              /* #242424 */
+    --input: 24 6% 16%;               /* #242424 */
+    --ring: 28 100% 53%;              /* #FF7000 */
+    --chart-1: 28 100% 53%;           /* #FF7000 */
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    color: hsl(var(--foreground));
+    font-weight: 600;
+  }
+  a {
+    color: hsl(var(--primary));
+    font-weight: 500;
+    text-decoration: none;
+  }
+}
+
+/* Button style using tailwind classes is preferred! */
+button {
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 6px 12px rgba(255, 112, 0, 0.3);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Inputs */
+input, textarea {
+  border-radius: 9999px;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background-color: #333333;
+  color: hsl(var(--foreground));
+  width: 100%;
+  font-family: inherit;
+}
+
+input:focus, textarea:focus {
+  outline: 2px solid hsl(var(--primary));
+}
+
+/* Dropdowns */
+.dropdown {
+  background-color: #202020;
+  border-radius: 14px;
+  border: 1.5px solid #242424;
+  box-shadow:
+    0 8px 32px rgba(255,112,0,0.08),
+    0 2px 14px 2px rgba(0,0,0,0.26);
+  padding: 8px 0;
+  animation: fadeInSlide 0.22s ease;
+  position: absolute;
+  z-index: 1000;
+  min-width: 210px;
+  opacity: 0;
+  animation: fadeInSlide 0.22s forwards;
+}
+
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(-12px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+
+.dropdown-item {
+  color: #fff;
+  font-weight: 600;
+  padding: 14px 22px 14px 18px;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, border-left 0.2s;
+  border-left: 3px solid transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+.dropdown-item:not(:last-child) {
+  border-bottom: 1px solid rgba(255,112,0,0.09);
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background: linear-gradient(90deg,#FF7000 0%,#FFB84D 100%);
+  color: #181818;
+  border-left: 3px solid #FF7000;
+  box-shadow: 0 2px 12px rgba(255,112,0,0.11);
+  outline: none;
+}
+
+.dropdown-item.active {
+  background: #ff7000;
+  color: #181818;
+  border-left: 3px solid #CC5900;
+}
+
+.dropdown-item i {
+  margin-right: 8px;
+}
+body, html, #root {
+  background: #181818 !important;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}

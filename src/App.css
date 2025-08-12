@@ -1,0 +1,32 @@
+/* app.css or index.css */
+
+body, #root {
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: #181818 !important; /* or use hsl(var(--background)) for full Tailwind theme support */
+}
+
+/* No max-width, margin, or padding on #root! All that is handled per-page/component */
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em rgba(255,112,0,0.4));
+}
+
+.card {
+  background-color: var(--color-card);
+  padding: 2em;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+.read-the-docs {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
